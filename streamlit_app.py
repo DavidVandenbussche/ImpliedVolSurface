@@ -2,37 +2,12 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from scipy.interpolate import griddata
 import plotly.graph_objects as go
+from datetime import timedelta
 
-from db_utils import (
-    save_iv_surface_snapshot, 
-    load_iv_surface_snapshot, 
-    get_distinct_tickers, 
-    get_timestamps_for_ticker
-)
-from iv_surface_calculator import bs_call_price, implied_volatility, compute_iv_surface
+from iv_surface_calculator import compute_iv_surface  # Import clean IV logic
 
-st.set_page_config(page_title="IV Surface App", layout="wide")
-st.title("📈 Implied Volatility Surface Viewer")
-
-# --- Black-Scholes and IV functions ---
-def bs_call_price(S, K, T, r, sigma, q=0):
-    d1 = (np.log(S / K) + (r - q + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
-    d2 = d1 - sigma * np.sqrt(T)
-    return S * np.exp(-q * T) * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
-
-def implied_volatility(price, S, K, T, r, q=0):
-    if T <= 0 or price <= 0:
-        return np.nan
-    def objective(sigma):
-        return bs_call_price(S, K, T, r, sigma, q) - price
-    try:
-        return brentq(objective, 1e-6, 5)
-    except (ValueError, RuntimeError):
-        return np.nan
-
-# --- Streamlit UI ---
 st.set_page_config(page_title="IV Surface")
 st.title("3D Implied Volatility Surface for Options")
 
@@ -67,8 +42,6 @@ if min_strike_pct >= max_strike_pct:
 # --- Fetch ticker data ---
 ticker = yf.Ticker(ticker_symbol)
 st.sidebar.write(f"Fetching {ticker_symbol} options data...")
-
-
 
 try:
     spot_history = ticker.history(period="5d")
@@ -105,7 +78,7 @@ for expiry_date in exp_dates:
         calls = opt_chain.calls
     except Exception as e:
         continue  # Skip problematic chains
-    
+
     calls = calls[(calls["bid"] > 0) & (calls["ask"] > 0)]
     for _, row in calls.iterrows():
         option_data.append({
@@ -137,22 +110,9 @@ if options_df.empty:
     st.error("No options left after applying strike price filter. Adjust range.")
     st.stop()
 
-# --- Compute Implied Volatility in one go ---
+# --- Compute Implied Volatility ---
 with st.spinner("Calculating Implied Volatility..."):
-    options_df['impliedVolatility'] = options_df.apply(
-        lambda row: implied_volatility(
-            price=row['mid'],
-            S=spot_price,
-            K=row['strike'],
-            T=row['timeToExpiration'],
-            r=r,
-            q=dividend_yield
-        ), axis=1
-    )
-
-options_df.dropna(subset=['impliedVolatility'], inplace=True)
-options_df['impliedVolatility'] *= 100  # Convert to percentage
-options_df['moneyness'] = options_df['strike'] / spot_price
+    options_df = compute_iv_surface(options_df, spot_price, r, dividend_yield)
 
 if options_df.empty:
     st.error("No valid IVs computed. Try adjusting filter parameters.")
@@ -194,7 +154,6 @@ fig.update_layout(
     margin=dict(l=65, r=50, b=65, t=90)
 )
 
-
 st.plotly_chart(fig)
 
 # --- Sidebar Stats ---
@@ -208,4 +167,3 @@ st.markdown(
     🎓 National Unversity of Singapore 
     """
 )
-
