@@ -2,21 +2,41 @@ import sqlite3
 import pandas as pd
 import streamlit as st
 
-# --- Function to save DataFrame to SQLite ---
-def save_iv_surface(df, db_path="iv_surfaces.db", table_name="iv_data"):
+DB_PATH = "iv_surfaces.db"
+TABLE_NAME = "iv_data"
+
+# --- Save IV Surface Snapshot ---
+def save_iv_surface_snapshot(df, ticker, timestamp, db_path=DB_PATH, table_name=TABLE_NAME):
+    df['ticker'] = ticker
+    df['timestamp'] = timestamp
     conn = sqlite3.connect(db_path)
     df.to_sql(table_name, conn, if_exists='append', index=False)
     conn.close()
-    st.success("IV Surface saved to database.")
+    st.success(f"Snapshot for {ticker} saved at {timestamp}.")
 
-# --- Function to read saved DataFrame ---
-def load_iv_surface(db_path="iv_surfaces.db", table_name="iv_data"):
+# --- Load IV Surface by Ticker and Timestamp ---
+def load_iv_surface_snapshot(ticker, timestamp, db_path=DB_PATH, table_name=TABLE_NAME):
     conn = sqlite3.connect(db_path)
-    try:
-        df = pd.read_sql(f"SELECT * FROM {table_name}", conn)
-        st.write("Loaded Saved IV Surfaces:")
-        st.dataframe(df.head(20))  # Display first few rows
-    except Exception as e:
-        st.error(f"Error loading data: {e}")
-    finally:
-        conn.close()
+    query = f"""
+        SELECT * FROM {table_name}
+        WHERE ticker = ? AND timestamp = ?
+    """
+    df = pd.read_sql_query(query, conn, params=(ticker, timestamp))
+    conn.close()
+    return df
+
+# --- Get Available Tickers ---
+def get_distinct_tickers(db_path=DB_PATH, table_name=TABLE_NAME):
+    conn = sqlite3.connect(db_path)
+    query = f"SELECT DISTINCT ticker FROM {table_name}"
+    tickers = pd.read_sql_query(query, conn)['ticker'].tolist()
+    conn.close()
+    return tickers
+
+# --- Get Available Timestamps for Ticker ---
+def get_timestamps_for_ticker(ticker, db_path=DB_PATH, table_name=TABLE_NAME):
+    conn = sqlite3.connect(db_path)
+    query = f"SELECT DISTINCT timestamp FROM {table_name} WHERE ticker = ?"
+    timestamps = pd.read_sql_query(query, conn, params=(ticker,))['timestamp'].tolist()
+    conn.close()
+    return timestamps
