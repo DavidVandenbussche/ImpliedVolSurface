@@ -66,11 +66,20 @@ progress.empty()
 
 # Sidebar filters
 if moneyness_toggle == "Strike Price ($)":
-    min_strike = st.sidebar.slider("Min Strike", float(iv_df["strike"].min()), float(iv_df["strike"].max()), float(iv_df["strike"].min()))
-    max_strike = st.sidebar.slider("Max Strike", float(iv_df["strike"].min()), float(iv_df["strike"].max()), float(iv_df["strike"].max()))
-    filtered_df = iv_df[(iv_df["strike"] >= min_strike) & (iv_df["strike"] <= max_strike)]
+    # min_strike = st.sidebar.slider("Min Strike", float(iv_df["strike"].min()), float(iv_df["strike"].max()), float(iv_df["strike"].min()))
+    # max_strike = st.sidebar.slider("Max Strike", float(iv_df["strike"].min()), float(iv_df["strike"].max()), float(iv_df["strike"].max()))
+    min_strike_pct = st.sidebar.slider("Min Strike (% of Spot)", 50, 150, 80)
+    max_strike_pct = st.sidebar.slider("Max Strike (% of Spot)", 51, 200, 120)
+
+    # filtered_df = iv_df[(iv_df["strike"] >= min_strike) & (iv_df["strike"] <= max_strike)]
+    filtered_df = iv_df[
+    (iv_df["strike"] >= spot_price * (min_strike_pct / 100)) &
+    (iv_df["strike"] <= spot_price * (max_strike_pct / 100))
+    ]
+
     Y_vals = filtered_df["strike"]
     y_label = "Strike Price ($)"
+    
 else:
     min_money = st.sidebar.slider("Min Moneyness", float(iv_df["moneyness"].min()), float(iv_df["moneyness"].max()), float(iv_df["moneyness"].min()))
     max_money = st.sidebar.slider("Max Moneyness", float(iv_df["moneyness"].min()), float(iv_df["moneyness"].max()), float(iv_df["moneyness"].max()))
