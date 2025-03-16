@@ -9,7 +9,7 @@ def bs_call_price(S, K, T, r, sigma, q=0):
     d2 = d1 - sigma * np.sqrt(T)
     return S * np.exp(-q * T) * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
 
-# --- Implied Volatility ---
+# --- Implied Volatility Solver ---
 def implied_volatility(price, S, K, T, r, q=0):
     if T <= 0 or price <= 0:
         return np.nan
@@ -20,7 +20,7 @@ def implied_volatility(price, S, K, T, r, q=0):
     except (ValueError, RuntimeError):
         return np.nan
 
-# --- Calculate IV Surface for DataFrame ---
+# --- Compute IV Surface for Options DataFrame ---
 def compute_iv_surface(options_df, spot_price, r, dividend_yield):
     options_df['impliedVolatility'] = options_df.apply(
         lambda row: implied_volatility(
@@ -33,6 +33,6 @@ def compute_iv_surface(options_df, spot_price, r, dividend_yield):
         ), axis=1
     )
     options_df.dropna(subset=['impliedVolatility'], inplace=True)
-    options_df['impliedVolatility'] *= 100  # %
+    options_df['impliedVolatility'] *= 100  # percentage
     options_df['moneyness'] = options_df['strike'] / spot_price
     return options_df
