@@ -34,6 +34,16 @@ spot_price = spy.history(period="1d")["Close"].iloc[-1]
 expirations = spy.options
 chosen_expiry = st.selectbox("Select Expiration Date", expirations)
 
+# Compute precise time to expiration
+expiry_datetime = pd.to_datetime(chosen_expiry)
+time_delta = expiry_datetime - pd.Timestamp.now()
+T_days = time_delta.days
+
+if T_days < 1:
+    T = time_delta.total_seconds() / (365 * 24 * 60 * 60)
+else:
+    T = T_days / 365
+    
 # Fetch options chain
 option_chain = spy.option_chain(chosen_expiry)
 calls = option_chain.calls
@@ -42,12 +52,12 @@ calls = option_chain.calls
 calls = calls[(calls["bid"] > 0) & (calls["ask"] > 0)].copy()
 calls["mid"] = (calls["bid"] + calls["ask"]) / 2
 
-# Compute time to expiration in years
-T = (pd.to_datetime(chosen_expiry) - pd.Timestamp.today()).days / 365
 calls["time_to_expiration"] = T
 
 # Compute IV
-calls["implied_vol"] = calls.apply(lambda row: implied_volatility(row["mid"], spot_price, row["strike"], T, r=0.015), axis=1)
+calls["implied_vol"] = calls.apply(
+    lambda row: implied_volatility(row["mid"], spot_price, row["strike"], T, r=0.015), axis=1
+)
 calls.dropna(subset=["implied_vol"], inplace=True)
 calls.sort_values("strike", inplace=True)
 
