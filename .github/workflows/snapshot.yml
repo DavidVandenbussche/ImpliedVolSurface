@@ -1,0 +1,34 @@
+name: Daily Snapshot Scheduler
+
+on:
+  schedule:
+    - cron: '0 18 * * *'  # Runs daily at 18:00 UTC (adjust as you like)
+
+jobs:
+  run-snapshot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install yfinance schedule
+      
+    - name: Run snapshot
+      run: python snapshot_once.py
+
+    - name: Commit updated DB
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add iv_surfaces.db
+        git commit -m "Automated DB update: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+        git push
