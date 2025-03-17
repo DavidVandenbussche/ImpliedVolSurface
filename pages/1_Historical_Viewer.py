@@ -22,9 +22,9 @@ if st.button("Load IV Surface"):
     if df.empty:
         st.warning("No data found.")
     else:
-        X = df["timeToExpiration"].values
-        Y = df["moneyness"].values
-        Z = df["impliedVolatility"].values
+        X = df["timeToExpiration"].astype(float).values
+        Y = df["moneyness"].astype(float).values
+        Z = df["impliedVolatility"].astype(float).values
 
         grid_x = np.linspace(X.min(), X.max(), 50)
         grid_y = np.linspace(Y.min(), Y.max(), 50)
