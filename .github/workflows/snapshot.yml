@@ -2,7 +2,7 @@ name: Daily Snapshot Scheduler
 
 on:
   schedule:
-    - cron: '0 21 * * *'  # Daily at 20:00 UTC
+    - cron: '0 18 * * *'  # Daily 
   workflow_dispatch:      # <- This enables manual Run Workflow button
 
 
