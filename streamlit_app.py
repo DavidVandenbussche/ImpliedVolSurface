@@ -8,35 +8,8 @@ from datetime import timedelta
 
 from iv_surface_calculator import compute_iv_surface  # Import clean IV logic
 
-# Only solution to solve the main page title problem
-def set_page_title(title):
-    st.sidebar.markdown(unsafe_allow_html=True, body=f"""
-        <iframe height=0 srcdoc="<script>
-            const title = window.parent.document.querySelector('title') \
-                
-            const oldObserver = window.parent.titleObserver
-            if (oldObserver) {{
-                oldObserver.disconnect()
-            }} \
 
-            const newObserver = new MutationObserver(function(mutations) {{
-                const target = mutations[0].target
-                if (target.text !== '{title}') {{
-                    target.text = '{title}'
-                }}
-            }}) \
-
-            newObserver.observe(title, {{ childList: true }})
-            window.parent.titleObserver = newObserver \
-
-            title.text = '{title}'
-        </script>" />
-    """)
-
-
-set_page_title("IV Surface")
-
-# st.set_page_config(page_title="IV Surface")
+st.set_page_config(page_title="IV Surface")
 st.title("3D Implied Volatility Surface for Options")
 
 # --- Sidebar parameters ---
@@ -69,7 +42,6 @@ if min_strike_pct >= max_strike_pct:
 
 # --- Fetch ticker data ---
 ticker = yf.Ticker(ticker_symbol)
-st.sidebar.write(f"Fetching {ticker_symbol} options data...")
 
 try:
     spot_history = ticker.history(period="5d")
