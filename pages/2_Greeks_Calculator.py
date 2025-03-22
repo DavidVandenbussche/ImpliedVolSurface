@@ -6,8 +6,8 @@ st.set_page_config(page_title="Greeks Calculator", layout="wide")
 st.title("📊 Option Greeks Calculator")
 
 st.sidebar.header("Input Parameters")
-spot_price = st.sidebar.number_input("Stock Price", min_value=1.0, max_value=50000.0, value=4000.0, step=1.0)
-strike_price = st.sidebar.number_input("Strike Price", min_value=1.0, max_value=50000.0, value=4000.0, step=1.0)
+spot_price = st.sidebar.number_input("Stock Price", min_value=1.0, max_value=50000.0, value=400.0, step=1.0)
+strike_price = st.sidebar.number_input("Strike Price", min_value=1.0, max_value=50000.0, value=400.0, step=1.0)
 time_to_expiry = st.sidebar.number_input("Time to Expiry (Years)", min_value=0.01, max_value=5.0, value=1.0, step=0.01)
 volatility = st.sidebar.number_input("Volatility (%)", min_value=1.0, max_value=300.0, value=20.0, step=0.1) / 100
 risk_free_rate = st.sidebar.number_input("Risk-Free Rate (%)", min_value=0.0, max_value=20.0, value=2.0, step=0.1) / 100
