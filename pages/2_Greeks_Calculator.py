@@ -34,7 +34,7 @@ st.table(greeks_df)
 
 # Visualizations
 st.write("### Greeks Visualizations")
-cols = st.columns(2)
+cols = st.columns(3)
 for idx, greek in enumerate(greeks.keys()):
     fig = bs_model.greek_visualisation(option_type, greek)
     with cols[idx % 2]:
