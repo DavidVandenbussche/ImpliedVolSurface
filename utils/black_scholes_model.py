@@ -60,8 +60,8 @@ class BlackScholes:
     def greek_visualisation(self, option_type, greek):
         fig = go.Figure()
         line_color = '#FA7070' if option_type == 'Call' else '#799351'
-        min_s = self.s * 0.92
-        max_s = self.s * 1.09
+        min_s = self.s * 0.5
+        max_s = self.s * 2
         spot_values = np.linspace(min_s, max_s, 200)
 
         greek_values = [BlackScholes(self.r, s, self.k, self.t, self.sigma).greeks(option_type)[greek] for s in spot_values]
