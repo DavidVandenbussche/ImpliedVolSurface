@@ -40,10 +40,10 @@ for idx, greek in enumerate(greeks.keys()):
     with cols[idx % 3]:
         st.plotly_chart(fig, use_container_width=True)
 
-st.write("---")
-st.markdown(
-    """
-    **Created by David Vandenbussche | [LinkedIn](https://www.linkedin.com/in/vandenbusschedavid/)**  
-    🎓 National University of Singapore 
-    """
-)
+# st.write("---")
+# st.markdown(
+#     """
+#     **Created by David Vandenbussche | [LinkedIn](https://www.linkedin.com/in/vandenbusschedavid/)**  
+#     🎓 National University of Singapore 
+#     """
+# )
