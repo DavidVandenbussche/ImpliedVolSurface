@@ -160,10 +160,10 @@ st.plotly_chart(fig)
 st.sidebar.write(f"Number of Options Used: **{len(options_df)}**")
 st.sidebar.write(f"Average IV: **{options_df['impliedVolatility'].mean():.2f}%**")
 
-st.write("---")
-st.markdown(
-    """
-    **Created by David Vandenbussche | [LinkedIn](https://www.linkedin.com/in/vandenbusschedavid/)**  
-    🎓 National Unversity of Singapore 
-    """
-)
+# st.write("---")
+# st.markdown(
+#     """
+#     **Created by David Vandenbussche | [LinkedIn](https://www.linkedin.com/in/vandenbusschedavid/)**  
+#     🎓 National Unversity of Singapore 
+#     """
+# )
