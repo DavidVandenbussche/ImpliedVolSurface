@@ -62,8 +62,10 @@ def fetch_and_save_snapshot():
     save_iv_surface_snapshot(options_df, ticker_symbol, timestamp)
     print(f"Snapshot saved at {timestamp}.")
 
-# --- Schedule daily snapshot at 9:00 AM ---
-schedule.every().day.at("09:00").do(fetch_and_save_snapshot)
+# --- Schedule snapshot ---
+# schedule.every().day.at("09:00").do(fetch_and_save_snapshot)
+schedule.every().monday.at("09:00").do(fetch_and_save_snapshot)
+
 
 print("Snapshot scheduler running...")
 
