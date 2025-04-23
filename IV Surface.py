@@ -33,8 +33,8 @@ st.sidebar.header("Y-axis Parameter")
 y_axis_option = st.sidebar.radio("Select Y-axis:", ("Moneyness", "Strike Price ($)"))
 
 st.sidebar.header("Strike Price Filter (% of Spot Price)")
-min_strike_pct = st.sidebar.number_input('Minimum (%)', min_value=50.0, max_value=199.0, value=80.0, step=1.0)
-max_strike_pct = st.sidebar.number_input('Maximum (%)', min_value=51.0, max_value=200.0, value=120.0, step=1.0)
+min_strike_pct = st.sidebar.number_input('Minimum (%)', min_value=50.0, max_value=199.0, value=70.0, step=1.0)
+max_strike_pct = st.sidebar.number_input('Maximum (%)', min_value=51.0, max_value=200.0, value=130.0, step=1.0)
 
 if min_strike_pct >= max_strike_pct:
     st.sidebar.error("Minimum % must be less than Maximum %")
