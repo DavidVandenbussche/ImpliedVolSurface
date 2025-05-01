@@ -8,6 +8,7 @@ from datetime import timedelta
 
 from iv_surface_calculator import compute_iv_surface  # Import clean IV logic
 
+st.write(f"yfinance version: {yfinance.__version__}")
 
 st.set_page_config(page_title="IV Surface")
 st.title("3D Implied Volatility Surface for Options")
