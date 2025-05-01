@@ -8,12 +8,14 @@ from datetime import timedelta
 
 from iv_surface_calculator import compute_iv_surface  # Import clean IV logic
 
-st.write(f"yfinance version: {yf.__version__}")
+
 
 st.set_page_config(page_title="IV Surface")
 st.title("3D Implied Volatility Surface for Options")
 
 # --- Sidebar parameters ---
+
+st.write(f"yfinance version: {yf.__version__}")
 st.sidebar.header("Model Parameters")
 r = st.sidebar.number_input('Risk-Free Rate (%)', value=1.5, step=0.1, format="%.2f") / 100
 st.sidebar.header("Dividend Yield")
