@@ -44,16 +44,15 @@ if min_strike_pct >= max_strike_pct:
 ticker = yf.Ticker(ticker_symbol)
 
 try:
-    spot_history = ticker.history(period="5d")
-    # spot_price = ticker.info["regularMarketPrice"]
-    if spot_history.empty:
-        st.error(f"Failed to fetch {ticker_symbol} spot price data.")
+    spot_price = ticker.info["regularMarketPrice"]
+    if spot_price is None or np.isnan(spot_price):
+        st.error(f"Failed to fetch {ticker_symbol} spot price.")
         st.stop()
-    spot_price = spot_history["Close"].iloc[-1]
     st.sidebar.info(f"{ticker_symbol} Spot Price: **${spot_price:.2f}**")
 except Exception as e:
     st.error(f"Error fetching {ticker_symbol} spot price: {e}")
     st.stop()
+
 
 # --- Fetch options chain & build data ---
 option_data = []
