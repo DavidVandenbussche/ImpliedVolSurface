@@ -44,8 +44,8 @@ if min_strike_pct >= max_strike_pct:
 ticker = yf.Ticker(ticker_symbol)
 
 try:
-    # spot_history = ticker.history(period="5d")
-    spot_price = ticker.info["regularMarketPrice"]
+    spot_history = ticker.history(period="5d")
+    # spot_price = ticker.info["regularMarketPrice"]
     if spot_history.empty:
         st.error(f"Failed to fetch {ticker_symbol} spot price data.")
         st.stop()
